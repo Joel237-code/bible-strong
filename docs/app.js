@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const cache=new Map();async function data(name){if(!cache.has(name))cache.set(name,fetch('./data/'+name+'.json').then(r=>{if(!r.ok)throw Error('Données indisponibles. Vérifiez votre connexion.');return r.json()}).catch(e=>{cache.delete(name);throw e}));return cache.get(name)}
-let books=[],book='Gal',chapter=6,selected=6,rows=[],activeStrong='',searchRows=[],resultRows=[],limit=50,lexSeq=0,readSeq=0;
+let books=[],book='John',chapter=1,selected=1,rows=[],activeStrong='',searchRows=[],resultRows=[],limit=50,lexSeq=0,readSeq=0;
 const notify=t=>{$('#toast').textContent=t;$('#toast').style.display='block';setTimeout(()=>$('#toast').style.display='none',5000)};
 const name=b=>books.find(x=>x.id===b)?.name||b;const refName=r=>{let [b,c,v]=r.split('.');return name(b)+' '+c+':'+v};
 function chapters(){let b=books.find(x=>x.id===book);$('#book').value=book;$('#chapter').innerHTML=Array.from({length:b.chapters},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');$('#chapter').value=chapter;}
