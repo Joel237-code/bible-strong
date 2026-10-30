@@ -1,0 +1,47 @@
+name: Publier Bible Strong
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bible-pages
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Importer les fichiers existants si nécessaire
+        run: python3 scripts/import_site.py
+      - name: Conserver les fichiers dans le dépôt
+        run: |
+          git add docs
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Importer l’application biblique et ses données vérifiées'
+            git push origin HEAD:main
+          fi
+      - name: Vérifier JavaScript
+        run: |
+          node --check docs/app.js
+          node --check docs/sw.js
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publier
+        id: deployment
+        uses: actions/deploy-pages@v4
