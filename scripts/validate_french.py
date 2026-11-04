@@ -1,3 +1,5 @@
+import runpy
+runpy.run_path('scripts/finalize_french.py',run_name='__main__')
 import json,re,hashlib
 from pathlib import Path
 root=Path('docs/data'); count=variants=0
