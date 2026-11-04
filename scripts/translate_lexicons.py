@@ -57,12 +57,14 @@ def main():
     print(f'Shard {args.shard}: {len(selected)} files, {len(items)} unique segments',flush=True)
     for offset in range(0,len(items),64):
         batch=items[offset:offset+64]
-        results=translator.translate_batch([x[1] for x in batch],target_prefix=[[prefix]]*len(batch) if prefix else None,beam_size=2,max_batch_size=2048,batch_type='tokens',max_input_length=0,max_decoding_length=768,replace_unknowns=True)
+        results=translator.translate_batch([x[1] for x in batch],target_prefix=[[prefix]]*len(batch) if prefix else None,beam_size=2,max_batch_size=2048,batch_type='tokens',max_input_length=0,max_decoding_length=768,replace_unknowns=True,no_repeat_ngram_size=4)
         for (text,_),res in zip(batch,results):
             value=sp.decode(res.hypotheses[0]).strip()
             if prefix and value.startswith(prefix):value=value[len(prefix):].strip()
             if not value and text:raise ValueError('Empty translation: '+text)
-            if len(res.hypotheses[0])>=768:raise ValueError('Output reached decoding limit')
+            if len(res.hypotheses[0])>=768 or len(res.hypotheses[0])>max(60,len(texts[text])*4):
+                print('UNTRANSLATED',text[:100],flush=True)
+                value='[Passage conservé en anglais : '+text+']'
             translated[text]=value
         if offset%640==0:print(f'{offset+len(batch)}/{len(items)} segments; {time.time()-start:.0f}s',flush=True)
     def render(text):return ''.join(value if kind=='keep' else translated[value] for kind,value in parts(text))
