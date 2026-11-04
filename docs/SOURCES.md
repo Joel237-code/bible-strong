@@ -40,3 +40,13 @@ Les sources en ligne peuvent changer. Les empreintes permettent de distinguer le
 
 ## Travail restant
 Traduction et révision du lexique complet ; contrôle linguistique par échantillons puis corrections ; présentation des variantes et mots non balisés ; construction de l’interface et de la PWA. Ne pas annoncer que le lexique français complet est terminé.
+
+
+
+## Ajout des définitions françaises — 4 novembre 2026
+
+Traduction automatique des champs anglais `gloss` et `definition` de chaque variante, par Argos Translate EN-FR 1.9 avec CTranslate2 (calcul int8, beam 2). Les définitions anglaises ne sont pas modifiées. Les segments grecs/hébreux, les numéros Strong et les références détectées sont conservés. Traduction non révisée : les termes techniques, abréviations, noms propres et nuances théologiques peuvent comporter des erreurs. Ce n’est pas une traduction officielle de STEPBible ou d’Open Scriptures.
+
+Les traductions des entrées grecques sont sous CC BY 4.0, avec attribution à STEPBible ; les traductions des entrées hébraïques sont des adaptations sous CC BY-SA 3.0, avec attribution à James Strong / Open Scriptures, David Troidl et David Instone-Brewer. Les fichiers `data/lex-fr-*.json` sont directement accessibles et réutilisables selon la licence de leur source. Les fichiers `data/metadata-*.json` identifient le moteur et l’empreinte du modèle. Les neuf résumés français pilotes sont conservés séparément et ne doivent pas être confondus avec les définitions complètes traduites.
+
+Moteur : https://github.com/argosopentech/argos-translate ; index officiel des modèles : https://github.com/argosopentech/argospm-index .
