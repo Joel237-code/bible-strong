@@ -17,3 +17,5 @@ jobs:
           git add docs/data/lex-fr-*.json
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Finaliser les traductions françaises contrôlées'
           git push origin HEAD:definitions-fr
+
+# Exclude translations with altered references or detected unrelated content.
