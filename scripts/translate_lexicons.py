@@ -13,7 +13,7 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('--shard',type=int,required=True);parser.add_argument('--shards',type=int,default=8)
     args=parser.parse_args(); root=Path('docs/data'); out=Path('translated');out.mkdir(exist_ok=True)
     archive=Path('/tmp/argos-en-fr.argosmodel')
-    urllib.request.urlretrieve('https://argos-net.com/v1/translate-en_fr-1_9.argosmodel',archive)
+    urllib.request.urlretrieve('https://data.argosopentech.com/argospm/v1/translate-en_fr-1_9.argosmodel',archive)
     model_sha=hashlib.sha256(archive.read_bytes()).hexdigest()
     with zipfile.ZipFile(archive) as z:z.extractall('/tmp/argos-en-fr')
     sp_path=next(Path('/tmp/argos-en-fr').rglob('sentencepiece.model')); pkg=sp_path.parent
