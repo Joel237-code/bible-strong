@@ -1,0 +1,48 @@
+name: Traduire les lexiques en français
+on:
+  push:
+    branches: [definitions-fr]
+    paths: ['scripts/translate_lexicons.py', '.github/workflows/translate-french.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - run: pip install 'ctranslate2==4.6.0' 'sentencepiece==0.2.0'
+      - run: python scripts/translate_lexicons.py --shard ${{ matrix.shard }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: french-${{ matrix.shard }}
+          path: translated/
+          retention-days: 14
+  collect:
+    needs: translate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: definitions-fr
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: french-*
+          path: docs/data
+          merge-multiple: true
+      - run: python3 scripts/validate_french.py
+      - name: Enregistrer les traductions pour contrôle avant publication
+        run: |
+          git add docs/data/lex-fr-*.json docs/data/metadata-*.json
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Ajouter les traductions automatiques françaises des lexiques'
+          git push origin HEAD:definitions-fr
