@@ -46,3 +46,5 @@ jobs:
           git add docs/data/lex-fr-*.json docs/data/metadata-*.json
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Ajouter les traductions automatiques françaises des lexiques'
           git push origin HEAD:definitions-fr
+
+# Regenerate after fixing Unicode and Scripture reference protection.
