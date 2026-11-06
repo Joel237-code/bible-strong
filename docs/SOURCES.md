@@ -1,6 +1,6 @@
 # Base de données — Étude biblique Strong
 
-État au 30 octobre 2026. Import réalisé ; application non construite dans ce lot.
+État au 6 novembre 2026. Texte biblique et lexiques importés ; application publiée (PWA) ; définitions françaises générées automatiquement pour les 14 035 mots Strong utilisés dans le texte, non révisées par un spécialiste.
 
 ## Résultats contrôlés
 - 66 livres, 1 189 chapitres, 31 170 lignes de versets dans l’export source (ce compte dépend de sa versification).
@@ -50,3 +50,13 @@ Traduction automatique des champs anglais `gloss` et `definition` de chaque vari
 Les traductions des entrées grecques sont sous CC BY 4.0, avec attribution à STEPBible ; les traductions des entrées hébraïques sont des adaptations sous CC BY-SA 3.0, avec attribution à James Strong / Open Scriptures, David Troidl et David Instone-Brewer. Les fichiers `data/lex-fr-*.json` sont directement accessibles et réutilisables selon la licence de leur source. Les fichiers `data/metadata-*.json` identifient le moteur et l’empreinte du modèle. Les neuf résumés français pilotes sont conservés séparément et ne doivent pas être confondus avec les définitions complètes traduites.
 
 Moteur : https://github.com/argosopentech/argos-translate ; index officiel des modèles : https://github.com/argosopentech/argospm-index .
+
+## Nettoyage et révision des gloses françaises — 6 novembre 2026
+
+`scripts/polish_glosses.py` (idempotent) :
+- supprime les espaces et accolades parasites des gloses françaises et raccourcit à 60 caractères celles qui contenaient une définition entière (6 331 gloses). La glose d'origine est conservée dans `gloss_fr_auto`, et l'entrée est marquée `gloss_edit: "auto"` ;
+- remplace par une glose révisée à la main les 77 mots les plus fréquents (par exemple G3056 « parole ; mot ; discours », G2316 « Dieu », H3068 « Yahvé ; l’Éternel »). Ces entrées sont marquées `gloss_edit: "manual"`. Le lemme attendu est vérifié avant chaque remplacement.
+
+`scripts/validate_french.py` ne contrôle plus la présence des jetons grecs et hébreux dans les gloses ainsi modifiées ; les définitions complètes, elles, restent contrôlées.
+
+Limites connues : 531 définitions restent partiellement en anglais (« Passage conservé en anglais après contrôle automatique »), dont de nombreux mots très fréquents (G2532, G3588, G5207…). Les gloses révisées à la main n'ont pas été relues par un tiers.
