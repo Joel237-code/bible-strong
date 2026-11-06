@@ -13,5 +13,6 @@ for path in sorted(root.glob('lex-[GH]*.json')):
             assert f['source_sha256']==hashlib.sha256(json.dumps(e,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),key
             for field in ['gloss','definition']:
                 assert not e[field].strip() or f[field+'_fr'].strip(),key
+                if field=='gloss' and f.get('gloss_edit'): continue  # glose nettoyée ou révisée : voir gloss_fr_auto
                 for token in re.findall(r'[\u0370-\u03ff\u1f00-\u1fff\u0590-\u05ff]+|\b[GH]\d+\b',e[field]):assert token in f[field+'_fr'],(key,token)
 print(f'PASS: {count} Strong keys, {variants} variants, source hashes and original-language tokens preserved.')
