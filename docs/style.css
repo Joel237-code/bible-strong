@@ -3,3 +3,5 @@
 
 /* Bilingual lexical definitions */
 .fr .definition{font-size:13px;font-weight:400}.fr small{line-height:1.5}.bilingual>div{min-width:0}@media(min-width:1200px){.workspace{grid-template-columns:230px minmax(350px,1fr) 520px}.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:18px}.fr{padding:12px}}
+.french-brief{margin:20px 0;padding:16px 18px;border-left:3px solid #b68b57;background:#f5f0e7;border-radius:0 8px 8px 0}.french-brief p{margin:8px 0;font-size:16px;line-height:1.65}.french-brief small{display:block;line-height:1.5;color:#71695e;font-size:11px}
+

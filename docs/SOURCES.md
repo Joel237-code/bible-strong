@@ -1,6 +1,6 @@
 # Base de données — Étude biblique Strong
 
-État au 30 octobre 2026. Import réalisé ; application non construite dans ce lot.
+État au 9 novembre 2026. Application web et PWA construites et publiées sur GitHub Pages ; Bible, lexiques et concordance disponibles hors ligne.
 
 ## Résultats contrôlés
 - 66 livres, 1 189 chapitres, 31 170 lignes de versets dans l’export source (ce compte dépend de sa versification).
@@ -39,7 +39,7 @@ Python 3, bibliothèque standard : `python import_sources.py` puis `python build
 Les sources en ligne peuvent changer. Les empreintes permettent de distinguer les versions ; cet import ne fige pas un commit Git amont.
 
 ## Travail restant
-Traduction et révision du lexique complet ; contrôle linguistique par échantillons puis corrections ; présentation des variantes et mots non balisés ; construction de l’interface et de la PWA. Ne pas annoncer que le lexique français complet est terminé.
+Relecture humaine progressive des définitions, noms propres et nuances contextuelles. Les traductions automatiques et résumés ne constituent pas une édition scientifique révisée.
 
 
 
@@ -50,3 +50,9 @@ Traduction automatique des champs anglais `gloss` et `definition` de chaque vari
 Les traductions des entrées grecques sont sous CC BY 4.0, avec attribution à STEPBible ; les traductions des entrées hébraïques sont des adaptations sous CC BY-SA 3.0, avec attribution à James Strong / Open Scriptures, David Troidl et David Instone-Brewer. Les fichiers `data/lex-fr-*.json` sont directement accessibles et réutilisables selon la licence de leur source. Les fichiers `data/metadata-*.json` identifient le moteur et l’empreinte du modèle. Les neuf résumés français pilotes sont conservés séparément et ne doivent pas être confondus avec les définitions complètes traduites.
 
 Moteur : https://github.com/argosopentech/argos-translate ; index officiel des modèles : https://github.com/argosopentech/argospm-index .
+## Révision française — 9 novembre 2026
+
+Retraduction ciblée des passages explicitement conservés en anglais avec Helsinki-NLP/opus-mt-tc-big-en-fr (CC BY 4.0) : https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-en-fr . Les mots grecs et hébreux, numéros Strong et références bibliques sont protégés pendant le traitement.
+
+Les gloses ont été nettoyées et limitées à 60 caractères ; leur forme développée est conservée dans `gloss_expanded_fr`. Chaque variante possède un `summary_fr`. Les mots fréquents ou théologiquement sensibles ont reçu un résumé éditorial assisté par IA et vérifié avec la source anglaise ; les autres sont des extraits automatiques signalés comme tels. Rapport : `data/french-revision-report.json`. Scripts : `scripts/clean_french_v2.py` et `scripts/retranslate_fallbacks.py`.
+
