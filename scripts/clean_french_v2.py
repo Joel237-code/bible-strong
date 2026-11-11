@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path('docs/data')
 
 EDITORIAL = {
- 'G3056': ('parole ; discours ; raison', 'Parole exprimant une pensée, discours ou message ; selon le contexte, raison ou compte rendu. Dans Jean 1, le terme désigne la Parole, le Logos.'),
+ 'G3056': ('parole ; discours ; raison', 'Parole exprimant une pensée, un discours ou un message ; selon le contexte, le mot peut aussi désigner une raison, un motif ou un compte rendu.'),
  'G2316': ('Dieu ; dieu ; divinité', 'Désigne Dieu ou, selon le contexte, un dieu ou une divinité. Le mot seul ne signifie pas « mon Dieu » : cette expression suppose un possessif.'),
  'H3068': ('YHWH ; Yahvé ; l’Éternel', 'Nom propre du Dieu d’Israël, écrit avec les quatre consonnes YHWH. « Yahvé » est une restitution usuelle ; la Segond le rend généralement par « l’Éternel ». « Jéhovah » est une forme traditionnelle plus tardive.'),
  'H3069': ('YHWH ; Yahvé', 'Même nom divin YHWH, avec une vocalisation particulière liée à la lecture traditionnelle « Elohim ». Ce numéro ne désigne pas une autre divinité.'),
