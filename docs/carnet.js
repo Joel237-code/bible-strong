@@ -3,6 +3,7 @@
   const own = (object, key) => Object.hasOwn(object, key);
   const validRef = ref => /^[A-Za-z0-9]+\.[1-9]\d{0,2}\.[1-9]\d{0,2}$/.test(ref);
   const suggested = ['Prière', 'Foi', 'À étudier'];
+  const colors = {yellow: 'Jaune', green: 'Vert', blue: 'Bleu', pink: 'Rose', purple: 'Violet'};
   const fresh = () => ({version: 1, categories: [], verses: {}});
   function validate(value) {
     if (value?.version !== 1 || !Array.isArray(value.categories) ||
@@ -19,6 +20,12 @@
           !item.categories.every(name => categories.includes(name)) ||
           typeof item.note !== 'string') throw Error('Verset ou note invalide.');
       verses[ref] = {categories: [...new Set(item.categories)], note: item.note};
+      if (item.color !== undefined) {
+        if (item.color !== null && (typeof item.color !== 'string' || !own(colors, item.color))) {
+          throw Error('Couleur de surlignage invalide.');
+        }
+        verses[ref].color = item.color;
+      }
     }
     return {version: 1, categories, verses};
   }
@@ -58,6 +65,7 @@
     const state = load();
     change(state);
     localStorage.setItem(storageKey, JSON.stringify(validate(state)));
+    paintHighlights(state);
   };
   function edit(ref) {
     frame(refName(ref));
@@ -94,14 +102,23 @@
       note.rows = 5;
       note.value = state.verses[ref]?.note || '';
       noteLabel.append(note);
-      dialog.append(categories, name, button('Ajouter la catégorie', add), noteLabel,
+      const colorLabel = element('label', 'Surlignage ');
+      const color = element('select');
+      for (const [value, label] of [['', 'Aucun'], ...Object.entries(colors)]) {
+        const option = element('option', label);
+        option.value = value;
+        color.append(option);
+      }
+      color.value = state.verses[ref]?.color || '';
+      colorLabel.append(color);
+      dialog.append(colorLabel, categories, name, button('Ajouter la catégorie', add), noteLabel,
         button('Enregistrer', () => {
           try {
             add();
             update(current => {
               current.categories = [...new Set([...current.categories, ...selected])];
-              if (selected.size || note.value.trim()) {
-                current.verses[ref] = {categories: [...selected], note: note.value.trim()};
+              if (selected.size || note.value.trim() || color.value) {
+                current.verses[ref] = {categories: [...selected], note: note.value.trim(), color: color.value || null};
               } else {
                 delete current.verses[ref];
               }
@@ -121,6 +138,7 @@
       }
       const existing = current.verses[ref];
       existing.categories = [...new Set([...existing.categories, ...item.categories])];
+      if (own(item, 'color')) existing.color = item.color;
       const separator = '\n\n— Note importée —\n';
       if (item.note && !existing.note.split(separator).includes(item.note)) {
         existing.note = [existing.note, item.note].filter(Boolean).join(separator);
@@ -166,13 +184,14 @@
       const entries = Object.entries(state.verses);
       if (!entries.length) dialog.append(element('p', 'Touchez le numéro d’un verset pour l’enregistrer.'));
       const groups = [...state.categories.map(name => [name, entries.filter(([, item]) => item.categories.includes(name))]),
-        ['Notes sans catégorie', entries.filter(([, item]) => !item.categories.length)]];
+        ['Sans catégorie', entries.filter(([, item]) => !item.categories.length)]];
       for (const [name, items] of groups) {
         if (!items.length) continue;
         const group = element('details');
         group.append(element('summary', name + ' (' + items.length + ')'));
         for (const [ref, item] of items) {
           const row = element('div');
+          if (item.color) row.dataset.highlight = item.color;
           row.append(button(refName(ref), () => { dialog.close(); navigateRef(ref); }),
             button('Modifier', () => edit(ref)));
           if (item.note) {
@@ -189,14 +208,24 @@
   const launcher = button('Mes versets', show);
   document.querySelector('.readingbar > div').prepend(launcher);
   const verses = document.querySelector('#verses');
+  function paintHighlights(state) {
+    for (const trigger of verses.querySelectorAll('.carnet-trigger')) {
+      const verse = trigger.closest('.verse');
+      const color = state.verses[trigger.dataset.carnetRef]?.color;
+      if (color) verse.dataset.highlight = color;
+      else delete verse.dataset.highlight;
+    }
+  }
   function enableVerseMenus() {
     for (const number of verses.querySelectorAll('span.verse-number')) {
       const ref = [book, chapter, number.textContent].join('.');
       const trigger = button(number.textContent, () => edit(ref));
       trigger.className = 'verse-number carnet-trigger';
-      trigger.setAttribute('aria-label', 'Enregistrer ou annoter ' + refName(ref));
+      trigger.dataset.carnetRef = ref;
+      trigger.setAttribute('aria-label', 'Surligner, enregistrer ou annoter ' + refName(ref));
       number.replaceWith(trigger);
     }
+    try { paintHighlights(load()); } catch { /* Le menu affiche les erreurs du carnet. */ }
   }
   new MutationObserver(enableVerseMenus).observe(verses, {childList: true});
   enableVerseMenus();
