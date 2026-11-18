@@ -102,23 +102,30 @@
       note.rows = 5;
       note.value = state.verses[ref]?.note || '';
       noteLabel.append(note);
-      const colorLabel = element('label', 'Surlignage ');
-      const color = element('select');
+      const colorLabel = element('fieldset');
+      colorLabel.className = 'highlight-palette';
+      colorLabel.append(element('legend', 'Surlignage'));
+      let selectedColor = state.verses[ref]?.color || '';
       for (const [value, label] of [['', 'Aucun'], ...Object.entries(colors)]) {
-        const option = element('option', label);
+        const choice = element('label');
+        if (value) choice.dataset.highlight = value;
+        const option = element('input');
+        option.type = 'radio';
+        option.name = 'highlight-color';
         option.value = value;
-        color.append(option);
+        option.checked = selectedColor === value;
+        option.onchange = () => { selectedColor = value; };
+        choice.append(option, document.createTextNode(label));
+        colorLabel.append(choice);
       }
-      color.value = state.verses[ref]?.color || '';
-      colorLabel.append(color);
       dialog.append(colorLabel, categories, name, button('Ajouter la catégorie', add), noteLabel,
         button('Enregistrer', () => {
           try {
             add();
             update(current => {
               current.categories = [...new Set([...current.categories, ...selected])];
-              if (selected.size || note.value.trim() || color.value) {
-                current.verses[ref] = {categories: [...selected], note: note.value.trim(), color: color.value || null};
+              if (selected.size || note.value.trim() || selectedColor) {
+                current.verses[ref] = {categories: [...selected], note: note.value.trim(), color: selectedColor || null};
               } else {
                 delete current.verses[ref];
               }
